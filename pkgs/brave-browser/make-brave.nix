@@ -80,7 +80,7 @@ let
   gtk-4-12-5 = gtk4.overrideAttrs (final: prev : rec {
     version = "4.12.5";
     src = fetchurl {
-      url = "mirror://gnome/sources/gtk/${lib.versions.majorMinor final.version}/gtk-${final.version}.tar.xz";
+      url = with final; "mirror://gnome/sources/gtk/${lib.versions.majorMinor final.version}/gtk-${final.version}.tar.xz";
       hash = "sha256-KLNW1ZDuaO9ibi75ggst0hRBSEqaBCpaPwxA6d/E9Pg=";
     };
   });
