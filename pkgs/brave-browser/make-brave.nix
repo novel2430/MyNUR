@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, wrapGAppsHook4, makeWrapper
+{ lib, stdenv, fetchurl, wrapGAppsHook3, makeWrapper
 , alsa-lib
 , at-spi2-atk
 , at-spi2-core
