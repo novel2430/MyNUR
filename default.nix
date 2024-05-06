@@ -15,6 +15,7 @@
   overlays = import ./overlays; # nixpkgs overlays
 
   zju-connect = pkgs.callPackage ./pkgs/zju-connect { };
+  wpsoffice-cn = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice-cn { };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
