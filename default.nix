@@ -16,7 +16,6 @@
 
   zju-connect = pkgs.callPackage ./pkgs/zju-connect { };
   wpsoffice-cn = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice-cn { };
-  brave-browser-gtk4-12-5 = unstable.callPackage ./pkgs/brave-browser { };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
