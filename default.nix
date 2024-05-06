@@ -6,7 +6,7 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ unstable, pkgs ? import <nixpkgs> { } }:
+{ pkgs ? import <nixpkgs> { } }:
 
 {
   # The `lib`, `modules`, and `overlays` names are special
