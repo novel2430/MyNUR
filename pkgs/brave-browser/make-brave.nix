@@ -44,6 +44,8 @@
 , coreutils
 , xorg
 , zlib
+, buildPackages
+, compileSchemas ? stdenv.hostPlatform.emulatorAvailable buildPackages
 
 # command line arguments which are always set e.g "--disable-gpu"
 , commandLineArgs ? ""
@@ -80,9 +82,25 @@ let
   gtk-4-12-5 = gtk4.overrideAttrs (final: prev : rec {
     version = "4.12.5";
     src = fetchurl {
-      url = with final; "mirror://gnome/sources/gtk/${lib.versions.majorMinor final.version}/gtk-${final.version}.tar.xz";
+      url = "mirror://gnome/sources/gtk/${lib.versions.majorMinor final.version}/gtk-${final.version}.tar.xz";
       hash = "sha256-KLNW1ZDuaO9ibi75ggst0hRBSEqaBCpaPwxA6d/E9Pg=";
     };
+    postPatch = ''
+      # this conditional gates the installation of share/gsettings-schemas/.../glib-2.0/schemas/gschemas.compiled.
+      substituteInPlace meson.build \
+        --replace 'if not meson.is_cross_build()' 'if ${lib.boolToString compileSchemas}'
+      files=(
+        build-aux/meson/gen-demo-header.py
+        build-aux/meson/gen-visibility-macros.py
+        demos/gtk-demo/geninclude.py
+        gdk/broadway/gen-c-array.py
+        gdk/gen-gdk-gresources-xml.py
+        gtk/gen-gtk-gresources-xml.py
+        gtk/gentypefuncs.py
+      )
+      chmod +x ''${files[@]}
+      patchShebangs ''${files[@]}
+    '';
   });
 
   deps = [
