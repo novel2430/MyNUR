@@ -16,6 +16,7 @@
 
   zju-connect = pkgs.callPackage ./pkgs/zju-connect { };
   wpsoffice-cn = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice-cn { };
+  wechat-universal-bwrap = pkgs.callPackage ./pkgs/wechat-universal-bwrap { };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
