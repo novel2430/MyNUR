@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchgit
+{ stdenv, fetchurl
 , buildFHSUserEnvBubblewrap
 , writeShellScript
 , makeDesktopItem
@@ -68,9 +68,10 @@ let
   wechat-universal-license = stdenv.mkDerivation {
     pname = "${_pkgname}-license";
     version = "0.0.1";
-    src = fetchgit {
+    src = builtins.fetchGit {
       url = "https://github.com/7Ji-PKGBUILDs/wechat-universal-bwrap.git"; 
-      hash = "sha256-1CvsM0tQO/BYkFiIM8K9z4ZY7iDP0URrratEzFPq5Dg=";
+      ref = "master";
+      rev = "03333f8ec6a06c0a6698197a8a9039b8c871c52e";
     };
 
     buildPhase = ''
