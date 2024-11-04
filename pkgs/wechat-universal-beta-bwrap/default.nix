@@ -272,7 +272,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = ''
-      WeChat desktop with sandbox enabled 
+      WeChat (Beta) desktop with sandbox enabled 
       (Adapted from https://aur.archlinux.org/packages/wechat-universal-bwrap)
     '';
     homepage = "https://weixin.qq.com/";
