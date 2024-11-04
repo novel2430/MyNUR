@@ -17,7 +17,6 @@ appimageTools.wrapType2 {
     platforms = [ "x86_64-linux" ];
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     hydraPlatforms = [ ];
-    license = with lib.licenses; [ gpl3Plus ];
-    maintainers = with maintainers; [ suyu ];
+    license = with licenses; [ gpl3Plus ];
   };
 }
