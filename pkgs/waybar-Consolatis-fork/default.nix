@@ -185,9 +185,8 @@ stdenv.mkDerivation (finalAttrs: {
   passthru.updateScript = nix-update-script { };
 
   meta = {
-    homepage = "https://github.com/alexays/waybar";
-    description = "Highly customizable Wayland bar for Sway and Wlroots based compositors";
-    changelog = "https://github.com/alexays/waybar/releases/tag/${finalAttrs.version}";
+    homepage = "https://github.com/Consolatis/Waybar";
+    description = "Highly customizable Wayland bar for Sway and Wlroots based compositors (Consolatis fork)";
     license = lib.licenses.mit;
     mainProgram = "waybar";
     maintainers = with lib.maintainers; [
