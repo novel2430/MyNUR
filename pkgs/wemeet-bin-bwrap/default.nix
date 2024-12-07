@@ -1,8 +1,6 @@
-{ stdenv, lib, autoPatchelfHook, fetchurl , buildFHSUserEnvBubblewrap, writeShellScript, makeWrapper, copyDesktopItems, makeDesktopItem
+{ stdenv, lib, autoPatchelfHook, fetchurl , buildFHSUserEnvBubblewrap, writeShellScript, makeWrapper, copyDesktopItems, makeDesktopItem, wrapQtAppsHook
 , dpkg
 , alsa-lib
-, libgcc
-, glibc
 , libglvnd
 , libpulseaudio
 , xorg
@@ -21,9 +19,14 @@
 , fontconfig
 , harfbuzz
 , glib
+, xkeyboard_config
 
 , gcc
 , pkg-config
+
+, libyuv
+, libjpeg8
+, libxkbcommon
 }:
 let
   pkg-name = "wemeet-bin";
@@ -58,7 +61,6 @@ let
   };
   libraries = [
     alsa-lib
-    libgcc
     stdenv.cc.libc
     libglvnd
     libpulseaudio
@@ -81,6 +83,7 @@ let
     wayland
     nss
     curl
+    xkeyboard_config
 
     systemdLibs
     dbus
@@ -91,6 +94,10 @@ let
     fontconfig
     harfbuzz
     glib
+
+    libyuv
+    libjpeg8
+    libxkbcommon
   ];
   wemeet-src = stdenv.mkDerivation rec {
     name = "${pkg-name}";
@@ -106,28 +113,50 @@ let
     nativeBuildInputs = [
         dpkg
         autoPatchelfHook
+        wrapQtAppsHook
     ];
     buildInputs = libraries;
 
     unpackCmd = "dpkg -x $src .";
     sourceRoot = ".";
-    
-    dontWrapQtApps = true;
 
     installPhase = ''
-      mkdir -p $out;
+      mkdir -p $out/opt/wemeet;
       rm opt/wemeet/lib/libcurl.so
-      cp -r . $out
+      # libbugly is not likely to be necessary
+      install -Dm755 opt/wemeet/lib/lib{desktop_common,ImSDK,nxui*,qt_*,service*,tms_*,ui*,wemeet*,xcast*,xnn*}.so \
+          -t "$out/lib/wemeet"
+      if [ -f 'opt/wemeet/lib/libcrbase.so' ]; then
+          install -Dm755 opt/wemeet/lib/libcrbase.so -t "$out/lib/wemeet"
+      else
+          echo 'lib/libcrbase.so not found'
+      fi
+      # copy Qt
+      cp -r opt/wemeet/plugins opt/wemeet/resources opt/wemeet/translations "$out/lib/wemeet"
+      cp -a opt/wemeet/lib/lib{Qt,icu}* "$out/lib/wemeet"
+      # bin
+      cp -r opt/wemeet/bin $out/opt/wemeet
+      sed -i "s|^Prefix.*|Prefix = $out/lib/wemeet|" $out/opt/wemeet/bin/qt.conf
+      ln -s raw/xcast.conf "$out/opt/wemeet/bin/xcast.conf"
+      # wrap
+      install -Dm755 "${wrap}/libwemeetwrap.so" -t "$out/lib/wemeet"
+      # Icon
+      echo 'Installing icons...'
+      for res in 16 32 64 128 256; do
+          install -Dm644 \
+              opt/wemeet/icons/hicolor/''${res}x''${res}/mimetypes/wemeetapp.png \
+              $out/share/icons/hicolor/''${res}x''${res}/apps/${pkg-name}.png
+      done
     '';
   };
   startScript = writeShellScript "wemeet-start" ''
-    export LD_LIBRARY_PATH=/opt/wemeet/lib:${lib.makeLibraryPath libraries}
-    export LD_PRELOAD=''${LD_PRELOAD:-}:${wrap}/libwemeetwrap.so
+    export LD_LIBRARY_PATH=${wemeet-src}/lib/wemeet:${lib.makeLibraryPath libraries}
+    export LD_PRELOAD=${wrap}/libwemeetwrap.so
     export XDG_SESSION_TYPE=x11
     export EGL_PLATFORM=x11
     export QT_QPA_PLATFORM=xcb
     unset WAYLAND_DISPLAY
-    exec /opt/wemeet/bin/wemeetapp
+    exec ${wemeet-src}/opt/wemeet/bin/wemeetapp
   '';
   fhs = buildFHSUserEnvBubblewrap {
     name = "${pkg-name}";
@@ -139,6 +168,7 @@ let
       libraries;
     runScript = startScript;
     extraBwrapArgs = [
+      "--tmpfs \$HOME/.config "
       "--bind \$HOME/.local/share/wemeetapp{,}"
       "--ro-bind-try \${HOME}/.fontconfig{,}"
       "--ro-bind-try \${HOME}/.fonts{,}"
@@ -179,12 +209,6 @@ stdenv.mkDerivation rec {
     })
   ];
   installPhase = ''
-    echo 'Installing icons...'
-    for res in 16 32 64 128 256; do
-        install -Dm644 \
-            ${wemeet-src}/opt/wemeet/icons/hicolor/''${res}x''${res}/mimetypes/wemeetapp.png \
-            $out/share/icons/hicolor/''${res}x''${res}/apps/${pkg-name}.png
-    done
     makeWrapper ${fhs}/bin/${pkg-name} $out/bin/${pname} \
       --run "mkdir -p \$HOME/.local/share/wemeetapp"
     runHook postInstall
