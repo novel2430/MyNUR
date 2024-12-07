@@ -1,4 +1,5 @@
-{ stdenv, lib, autoPatchelfHook, fetchurl , buildFHSUserEnvBubblewrap, writeShellScript, makeWrapper, copyDesktopItems, makeDesktopItem, wrapQtAppsHook
+{ stdenv, lib, autoPatchelfHook, fetchurl , buildFHSUserEnvBubblewrap, writeShellScript, makeWrapper, copyDesktopItems, makeDesktopItem, wrapQtAppsHook, fetchFromGitHub
+, useWaylandScreenshare ? false
 , dpkg
 , alsa-lib
 , libglvnd
@@ -27,12 +28,24 @@
 , libyuv
 , libjpeg8
 , libxkbcommon
+
+
+, git
+, cmake
+, ninja
+, libportal
+, opencv
+, pipewire
+, libsysprof-capture
+, util-linux
+, libselinux
+, libsepol
 }:
 let
   pkg-name = "wemeet-bin";
   pkg-ver = "3.19.0.401";
   # pkg-ver = "3.19.2.400";
-  wrap = stdenv.mkDerivation rec {
+  wrap = stdenv.mkDerivation {
     name = "wrap-c";
     version = "1.0";
     src = ./.;
@@ -57,6 +70,47 @@ let
     installPhase = ''
       mkdir -p $out;
       install -Dm755 ./libwemeetwrap.so $out/libwemeetwrap.so
+    '';
+  };
+  # https://github.com/xuwd1/wemeet-wayland-screenshare
+  wemeet-wayland-screenshare = stdenv.mkDerivation {
+    name = "wemeet-wayland-screenshare";
+    version = "0.0.1";
+    src = fetchFromGitHub {
+      owner = "xuwd1";
+      repo = "wemeet-wayland-screenshare";
+      rev = "6deba6e18f74984ebf0d4eba0c3fe07a7bdd7ea6";
+      sha256 = "sha256-xl485d+DwiDGTlJYzg0Eb+pJ+KaetF9+rPW9aZAeXOw=";
+    };
+    nativeBuildInputs = [
+      gcc
+      pkg-config
+      git
+      cmake
+      ninja
+    ];
+
+    buildInputs = [
+      libportal
+      xorg.libXrandr
+      xorg.libXdamage
+      opencv
+      libsForQt5.qt5.qtwayland
+      libsForQt5.xwaylandvideobridge
+      pipewire
+      libsysprof-capture
+      util-linux
+      libselinux
+      libsepol
+    ];
+
+    dontWrapQtApps = true;
+
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out;
+      install -Dm755 "./libhook.so" "$out/libhook.so"
+      runHook postInstall
     '';
   };
   libraries = [
@@ -98,7 +152,14 @@ let
     libyuv
     libjpeg8
     libxkbcommon
+
+    opencv
   ];
+  ld-preload-path = 
+    if useWaylandScreenshare then
+      "${wemeet-wayland-screenshare}/libhook.so:${wrap}/libwemeetwrap.so"
+    else
+      "${wrap}/libwemeetwrap.so";
   wemeet-src = stdenv.mkDerivation rec {
     name = "${pkg-name}";
     version = "${pkg-ver}";
@@ -151,7 +212,7 @@ let
   };
   startScript = writeShellScript "wemeet-start" ''
     export LD_LIBRARY_PATH=${wemeet-src}/lib/wemeet:${lib.makeLibraryPath libraries}
-    export LD_PRELOAD=${wrap}/libwemeetwrap.so
+    export LD_PRELOAD=${ld-preload-path}
     export XDG_SESSION_TYPE=x11
     export EGL_PLATFORM=x11
     export QT_QPA_PLATFORM=xcb
@@ -217,6 +278,7 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = ''
       Tencent Meeting Linux Client
+      (Support Wayland Native Screenshare)
       (Adapted from https://aur.archlinux.org/packages/wemeet-bin)
     '';
     homepage = "https://source.meeting.qq.com";
