@@ -7,14 +7,13 @@
 #     nix-build -A mypackage
 
 { pkgs ? import <nixpkgs> { } }:
-
 {
   # The `lib`, `modules`, and `overlays` names are special
   lib = import ./lib { inherit pkgs; }; # functions
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
-  zju-connect = pkgs.callPackage ./pkgs/zju-connect {};
+  zju-connect = pkgs.callpackage ./pkgs/zju-connect {};
   wpsoffice = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice { };
   wpsoffice-cn = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice { useCn=true; };
   wechat-universal-bwrap = pkgs.callPackage ./pkgs/wechat-universal-bwrap { };
@@ -30,5 +29,9 @@
   gedit = pkgs.callPackage ./pkgs/gedit { };
   zen-browser-bin = pkgs.callPackage ./pkgs/zen-browser { };
   wechat-appimage = pkgs.callPackage ./pkgs/wechat-appimage { };
+  dingtalk = pkgs.callPackage ./pkgs/dingtalk {};
+  baidunetdisk = pkgs.callPackage ./pkgs/baidunetdisk {
+    electron_11 = pkgs.callPackage ./pkgs/baidunetdisk/electron_11.nix {};
+  };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
 }
