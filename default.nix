@@ -13,7 +13,7 @@
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
-  zju-connect = pkgs.callpackage ./pkgs/zju-connect {};
+  zju-connect = pkgs.callPackage ./pkgs/zju-connect {};
   wpsoffice = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice { };
   wpsoffice-cn = pkgs.libsForQt5.callPackage ./pkgs/wpsoffice { useCn=true; };
   wechat-universal-bwrap = pkgs.callPackage ./pkgs/wechat-universal-bwrap { };
