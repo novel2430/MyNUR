@@ -29,5 +29,6 @@
   shotcut-bin = pkgs.callPackage ./pkgs/shotcut {};
   hmcl = pkgs.callPackage ./pkgs/hmcl {};
   mangowc = pkgs.callPackage ./pkgs/mangowc {};
+
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
 }
