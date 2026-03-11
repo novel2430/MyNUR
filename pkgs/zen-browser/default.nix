@@ -32,7 +32,6 @@
 let
   pname = "zen-browser-bin";
   version = "1.19.1b";
-
   _pname = "zen-browser";
 
   src = fetchurl {
