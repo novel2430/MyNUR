@@ -26,6 +26,9 @@
 , zlib
 , libdeflate
 , libusb1
+, libXdamage
+, libXtst
+, libXv
 # For wpscloudsvr wrapper
 , libappindicator-gtk3
 

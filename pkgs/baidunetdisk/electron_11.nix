@@ -23,6 +23,14 @@
   pango,
   systemd,
   pciutils,
+  libX11,
+  libxcb,
+  libXcomposite,
+  libXdamage,
+  libXext,
+  libXfixes,
+  libXrandr,
+  libxkbfile,
 }:
 let
   headersFetcher =

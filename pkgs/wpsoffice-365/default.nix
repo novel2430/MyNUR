@@ -32,6 +32,16 @@
 , libglvnd
 , cairo
 , gdk-pixbuf
+, libXdamage
+, libXtst
+, libXv
+, libXScrnSaver
+, libxcb
+, libX11
+, libXrender
+, libSM
+, libICE
+, libXcursor
 # For wpscloudsvr wrapper
 , pkg-config
 , libappindicator-gtk3

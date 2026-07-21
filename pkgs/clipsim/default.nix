@@ -3,6 +3,8 @@
 , xclip
 , file
 , pkg-config
+, libXfixes
+, libX11
 }:
 stdenv.mkDerivation {
   pname = "clipsim";

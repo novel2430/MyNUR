@@ -27,6 +27,15 @@
 , hunspellDicts
 , networkmanager
 , speechd-minimal
+, libXt
+, libX11
+, libXext
+, libxcb
+, libXcomposite
+, libXdamage
+, libXrandr
+, libXxf86dga
+, libXxf86vm
 }:
 let
   pname = "zen-browser-bin";
