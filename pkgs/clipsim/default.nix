@@ -1,7 +1,6 @@
 {stdenv, fetchFromGitHub, lib
 , gnumake
 , xclip
-, xorg
 , file
 , pkg-config
 }:

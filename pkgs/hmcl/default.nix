@@ -6,7 +6,6 @@
   makeWrapper,
   copyDesktopItems,
   jre,
-  xorg,
   glib,
   libGL,
   glfw,
@@ -16,6 +15,12 @@
   wayland,
   vulkan-loader,
   libpulseaudio,
+  libX11,
+  libXxf86vm,
+  libXext,
+  libXcursor,
+  libXrandr,
+  libXtst,
 }:
 let
   icon = fetchurl {

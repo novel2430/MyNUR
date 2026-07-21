@@ -17,7 +17,6 @@
 , udev
 , gtk3
 , qtbase
-, xorg
 , cups
 , pango
 , freetype

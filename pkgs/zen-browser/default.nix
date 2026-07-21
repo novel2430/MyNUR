@@ -1,7 +1,6 @@
 { stdenv, lib, fetchurl, autoPatchelfHook, makeWrapper, copyDesktopItems, makeDesktopItem, writeText
 , dbus-glib
 , gtk3
-, xorg
 , nss
 , systemd
 , ffmpeg_7-headless

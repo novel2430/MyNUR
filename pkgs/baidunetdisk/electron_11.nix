@@ -20,7 +20,6 @@
   gdk-pixbuf,
   nss,
   nspr,
-  xorg,
   pango,
   systemd,
   pciutils,
