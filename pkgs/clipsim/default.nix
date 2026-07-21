@@ -17,9 +17,9 @@ stdenv.mkDerivation {
 
   buildInputs = [
     xclip
-    xorg.libXfixes
+    libXfixes
     file
-    xorg.libX11
+    libX11
   ];
 
   nativeBuildInputs = [ 
